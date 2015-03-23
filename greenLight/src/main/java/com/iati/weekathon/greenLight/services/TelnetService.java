@@ -39,9 +39,9 @@ public class TelnetService {
         telnetClient1.addOptionHandler(new TerminalTypeOptionHandler("VT100", false, false, true, false));
         telnetClient1.addOptionHandler(new SuppressGAOptionHandler(true, true, true, true));
         telnetClient1.addOptionHandler(new EchoOptionHandler(true, false, true, false));
-        log.info("Connecting to telnetClient1. IP: "+trafficLightIp+" , port:"+port);
+        log.info("Connecting to telnetClient1. IP: " + trafficLightIp + " , port:" + port);
         telnetClient1.connect(trafficLightIp, port);
-        log.info("Connected to telnetClient1. IP: "+trafficLightIp+" , port:"+port);
+        log.info("Connected to telnetClient1. IP: " + trafficLightIp + " , port:" + port);
         nps1OutputStream = new PrintStream(telnetClient1.getOutputStream());
         nps1InputStream = telnetClient1.getInputStream();
         String sessionStartText = readUntil(START_OF_TELNET_COMMAND);
@@ -78,12 +78,12 @@ public class TelnetService {
 
     }
 
-    private void sendCommand(String command) {
+    private synchronized void sendCommand(String command) {
         log.info("Sending command " + command);
         nps1OutputStream.println(command);
         nps1OutputStream.flush();
-       // String commandResult = readUntil(START_OF_TELNET_COMMAND);
-        //log.info("Command Result: \n" + commandResult);
+        String commandResult = readUntil(START_OF_TELNET_COMMAND);
+        log.info("Command Result: \n" + commandResult);
     }
 
     public String readUntil(String pattern) {

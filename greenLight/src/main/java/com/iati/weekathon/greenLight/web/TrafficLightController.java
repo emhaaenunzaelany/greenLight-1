@@ -58,7 +58,7 @@ public class TrafficLightController {
     Map<String, Object> setTrafficLightColor(@PathVariable(value = "id") long id) {
 
         Map<String, Object> model = new HashMap<String, Object>();
-        trafficLightsMgr.setLightToRed(id);
+        trafficLightsMgr.setLightToGreen(id);
         model.put("Message", "Changed Traffic Light '" + id + "' to RED");
         return model;
 

@@ -1,7 +1,9 @@
 package com.iati.weekathon.greenLight.web;
 
+import com.iati.weekathon.greenLight.services.TrafficLightsMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,8 @@ public class VehicleController {
 
     private final static Logger log = LoggerFactory.getLogger(VehicleController.class);
 
+    @Autowired
+    private TrafficLightsMgr trafficLightsMgr;
 
     @RequestMapping(value = "/location", method = RequestMethod.GET)
     public
@@ -30,7 +34,12 @@ public class VehicleController {
 
         Map<String, Object> model = new HashMap<String, Object>();
 
+
+       /* trafficLightsMgr.setLightToGreen();*/
+
         model.put("Message", "Received Vehicle location: X="+x+", Y="+y);
+
+
         //model.put("errMsg","");
         return model;
 
