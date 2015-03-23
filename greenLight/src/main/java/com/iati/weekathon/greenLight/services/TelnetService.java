@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -45,13 +46,32 @@ public class TelnetService {
         telnetClient1.addOptionHandler(new TerminalTypeOptionHandler("VT100", false, false, true, false));
         telnetClient1.addOptionHandler(new SuppressGAOptionHandler(true, true, true, true));
         telnetClient1.addOptionHandler(new EchoOptionHandler(true, false, true, false));
+        log.info("Connecting to telnetClient1. IP: "+trafficLightIp+" , port:"+port);
         telnetClient1.connect(trafficLightIp, port);
+        log.info("Connected to telnetClient1. IP: "+trafficLightIp+" , port:"+port);
         nps1OutputStream = new PrintStream(telnetClient1.getOutputStream());
         nps1InputStream = telnetClient1.getInputStream();
-        String sessionStartText =readUntil(START_OF_TELNET_COMMAND);
-        log.info("Started telnetClient1:"+sessionStartText);
+        String sessionStartText = readUntil(START_OF_TELNET_COMMAND);
+        log.info("Started telnetClient1:" + sessionStartText);
 
     }
+
+
+    @PreDestroy
+    private void disconnect() {
+
+        if (telnetClient1 == null) {
+            return;
+        }
+        try {
+            log.info("Disconnecting telnetClient1");
+            telnetClient1.disconnect();
+            log.info("Disconnected  telnetClient1");
+        } catch (Exception e) {
+            log.error("Failed to disconnect telnetClient1", e);
+        }
+    }
+
 
     public void sendOnCommand(int lightId) {
         String command = ON + lightId;
@@ -74,7 +94,7 @@ public class TelnetService {
     }
 
     public String readUntil(String pattern) {
-        log.info("Reading from telnet until pattern '"+pattern+"'");
+        log.info("Reading from telnet until pattern '" + pattern + "'");
         try {
             char lastChar = pattern.charAt(pattern.length() - 1);
             StringBuilder sb = new StringBuilder();
