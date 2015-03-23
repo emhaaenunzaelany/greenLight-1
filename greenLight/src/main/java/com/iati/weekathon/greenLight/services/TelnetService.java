@@ -12,13 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Liron
- * Date: 22/03/15
- * Time: 14:33
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class TelnetService {
 
@@ -89,8 +82,8 @@ public class TelnetService {
         log.info("Sending command " + command);
         nps1OutputStream.println(command);
         nps1OutputStream.flush();
-        String commandResult = readUntil(START_OF_TELNET_COMMAND);
-        log.info("Command Result: \n" + commandResult);
+       // String commandResult = readUntil(START_OF_TELNET_COMMAND);
+        //log.info("Command Result: \n" + commandResult);
     }
 
     public String readUntil(String pattern) {

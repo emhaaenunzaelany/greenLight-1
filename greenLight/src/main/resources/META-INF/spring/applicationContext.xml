@@ -2,15 +2,43 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <context:annotation-config/>
 
-    <context:property-placeholder location="classpath*:*.properties" />
+    <context:property-placeholder location="classpath*:*.properties"/>
 
     <context:component-scan base-package="com.iati.weekathon">
-        <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+        <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
+
+
+    <util:map id="trafficLights" key-type="java.lang.Long">
+        <entry key="${traffic.light.1.id}">
+            <bean id="trafficLight1" class="com.iati.weekathon.greenLight.domain.TrafficLight">
+                <property name="id" value="${traffic.light.1.id}"/>
+                <property name="npsIp" value="${traffic.light.1.nps}"/>
+                <property name="x" value="${traffic.light.1.x}"/>
+                <property name="y" value="${traffic.light.1.y}"/>
+                <property name="redId" value="${traffic.light.1.red.id}"/>
+                <property name="yellowId" value="${traffic.light.1.yellow.id}"/>
+                <property name="greenId" value="${traffic.light.1.green.id}"/>
+            </bean>
+        </entry>
+        <entry key="${traffic.light.2.id}">
+            <bean id="trafficLight2" class="com.iati.weekathon.greenLight.domain.TrafficLight">
+                <property name="id" value="${traffic.light.2.id}"/>
+                <property name="npsIp" value="${traffic.light.2.nps}"/>
+                <property name="x" value="${traffic.light.2.x}"/>
+                <property name="y" value="${traffic.light.2.y}"/>
+                <property name="redId" value="${traffic.light.2.red.id}"/>
+                <property name="yellowId" value="${traffic.light.2.yellow.id}"/>
+                <property name="greenId" value="${traffic.light.2.green.id}"/>
+            </bean>
+        </entry>
+    </util:map>
+
 
 
 </beans>
