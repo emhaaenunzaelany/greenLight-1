@@ -4,9 +4,10 @@ import com.iati.weekathon.greenLight.domain.TrafficLightState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,15 +21,16 @@ public class TrafficLightsRunner implements Runnable {
     private final static Logger log = LoggerFactory.getLogger(TrafficLightsRunner.class);
 
     private Map<Long, TrafficLightState> trafficLightsIdToState;
-    private volatile Set<Long> trafficLightsToSetAsGreen;
+    private volatile Set<Long> trafficLightsToSetAsGreen; //todo: make it synchronized
 
     public TrafficLightsRunner(Map<Long, TrafficLightState> trafficLightsIdToState) {
         this.trafficLightsIdToState = trafficLightsIdToState;
-        this.trafficLightsToSetAsGreen = new HashSet<>();
+        this.trafficLightsToSetAsGreen = Collections.newSetFromMap(new ConcurrentHashMap<Long, Boolean>());
     }
 
-    public void addLightToSetAsGreen(Long trafficLightId){
-        trafficLightsToSetAsGreen.add(trafficLightId);
+
+    public void addLightsToSetAsGreen(Set<Long> trafficLightIds){
+        trafficLightsToSetAsGreen.addAll(trafficLightIds);
     }
 
     @Override
@@ -36,7 +38,6 @@ public class TrafficLightsRunner implements Runnable {
 
         for (TrafficLightState trafficLightState : trafficLightsIdToState.values()) {
             trafficLightState.startTrafficLightScenario();
-
         }
 
         while (true) {
@@ -49,11 +50,14 @@ public class TrafficLightsRunner implements Runnable {
                 }
 
             } else {
+
+                log.info("Received the following Traffic Light ids to set as Green: "+trafficLightsToSetAsGreen);
                 for (Long trafficLightId : trafficLightsToSetAsGreen) {
 
                     TrafficLightState trafficLightState = trafficLightsIdToState.get(trafficLightId);
                     trafficLightState.setStateGreen();
                 }
+
                 trafficLightsToSetAsGreen.clear();
 
             }

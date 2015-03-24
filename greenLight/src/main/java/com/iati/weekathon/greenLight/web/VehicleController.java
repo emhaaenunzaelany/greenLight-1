@@ -34,10 +34,9 @@ public class VehicleController {
 
         Map<String, Object> model = new HashMap<String, Object>();
 
+        trafficLightsMgr.setTrafficLightToGreenAccordingToVehicleLocation(x, y);
 
-       /* trafficLightsMgr.setLightToGreen();*/
-
-        model.put("Message", "Received Vehicle location: X="+x+", Y="+y);
+        model.put("Message", "Received Vehicle location: X=" + x + ", Y=" + y);
 
 
         //model.put("errMsg","");

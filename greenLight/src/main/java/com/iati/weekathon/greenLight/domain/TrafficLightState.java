@@ -1,6 +1,6 @@
 package com.iati.weekathon.greenLight.domain;
 
-import com.iati.weekathon.greenLight.services.TelnetService;
+import com.iati.weekathon.greenLight.services.TrafficLightDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,14 +8,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class TrafficLightState  {
+public class TrafficLightState {
 
     private final static Logger log = LoggerFactory.getLogger(TrafficLightState.class);
 
-    public static enum LightState {STATE_RED, STATE_RED_YELLOW, STATE_GREEN, STATE_YELLOW};
+    public static enum LightState {STATE_RED, STATE_RED_YELLOW, STATE_GREEN, STATE_YELLOW}
+
+    ;
 
     private TrafficLight trafficLight;
-    private TelnetService telnetService;
+    private TrafficLightDao trafficLightDao;
 
     private TrafficLightColorEnum[][] mOn = {{TrafficLightColorEnum.RED},
             {TrafficLightColorEnum.YELLOW},
@@ -35,8 +37,8 @@ public class TrafficLightState  {
     public LightState mLightState;
     private Timer mTimer;
 
-    public TrafficLightState(TelnetService telnetService, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime, LightState lightstate) {
-        this.telnetService = telnetService;
+    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime, LightState lightstate) {
+        this.trafficLightDao = trafficLightDao;
         this.trafficLight = trafficLight;
         mRedTime = rtime;
         mRedYellowTime = redyellowtime;
@@ -47,8 +49,8 @@ public class TrafficLightState  {
 
     }
 
-    public TrafficLightState(TelnetService telnetService, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime) {
-        this(telnetService, trafficLight, rtime, redyellowtime, greentime, yellowtime, LightState.STATE_RED);
+    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime) {
+        this(trafficLightDao, trafficLight, rtime, redyellowtime, greentime, yellowtime, LightState.STATE_RED);
     }
 
     private long getStateTimeInSeconds() {
@@ -75,7 +77,7 @@ public class TrafficLightState  {
         }
 
         updateTrafficLight(mOn[mLightState.ordinal()], mOff[mLightState.ordinal()]);
-        log.info("Changed Traffic Light "+trafficLight.getId()+"' state to " + mLightState);
+        log.info("Changed Traffic Light " + trafficLight.getId() + "' state to " + mLightState);
         return mLightState;
     }
 
@@ -85,7 +87,7 @@ public class TrafficLightState  {
     }
 
     public void setState(LightState newState) {
-        if (mTimer != null)         {
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer.purge();
         }
@@ -106,31 +108,17 @@ public class TrafficLightState  {
 
     public void updateTrafficLight(TrafficLightColorEnum[] on, TrafficLightColorEnum[] off) {
 
-
-
         if (off != null) {
 
             for (TrafficLightColorEnum color : off) {
-                if (TrafficLightColorEnum.RED.equals(color)) {
-                    telnetService.sendOffCommand(trafficLight.getRedId());
-                } else if (TrafficLightColorEnum.YELLOW.equals(color)) {
-                    telnetService.sendOffCommand(trafficLight.getYellowId());
-                } else if (TrafficLightColorEnum.GREEN.equals(color)) {
-                    telnetService.sendOffCommand(trafficLight.getGreenId());
-                }
+                trafficLightDao.sendOffCommand(trafficLight, color);
             }
         }
 
         if (on != null) {
 
             for (TrafficLightColorEnum color : on) {
-                if (TrafficLightColorEnum.RED.equals(color)) {
-                    telnetService.sendOnCommand(trafficLight.getRedId());
-                } else if (TrafficLightColorEnum.YELLOW.equals(color)) {
-                    telnetService.sendOnCommand(trafficLight.getYellowId());
-                } else if (TrafficLightColorEnum.GREEN.equals(color)) {
-                    telnetService.sendOnCommand(trafficLight.getGreenId());
-                }
+               trafficLightDao.sendOnCommand(trafficLight, color);
             }
         }
 
