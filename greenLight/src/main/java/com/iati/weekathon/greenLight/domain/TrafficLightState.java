@@ -37,21 +37,22 @@ public class TrafficLightState {
     public LightState mLightState;
     private Timer mTimer;
 
-    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime, LightState lightstate) {
+    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight, LightState lightstate) {
         this.trafficLightDao = trafficLightDao;
         this.trafficLight = trafficLight;
-        mRedTime = rtime;
-        mRedYellowTime = redyellowtime;
-        mGreenTime = greentime;
-        mYellowTime = yellowtime;
+        mRedTime = trafficLight.getRedTimeInSeconds();
+        mRedYellowTime = trafficLight.getRedYellowTimeInSeconds();
+        mGreenTime = trafficLight.getGreenTimeInSeconds();
+        mYellowTime = trafficLight.getYellowTimeInSeconds();
 
         mLightState = lightstate;
 
     }
 
-    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight, int rtime, int redyellowtime, int greentime, int yellowtime) {
-        this(trafficLightDao, trafficLight, rtime, redyellowtime, greentime, yellowtime, LightState.STATE_RED);
+    public TrafficLightState(TrafficLightDao trafficLightDao, TrafficLight trafficLight) {
+        this(trafficLightDao, trafficLight, LightState.STATE_RED);
     }
+
 
     private long getStateTimeInSeconds() {
         switch (mLightState) {
@@ -77,20 +78,39 @@ public class TrafficLightState {
         }
 
         updateTrafficLight(mOn[mLightState.ordinal()], mOff[mLightState.ordinal()]);
-        log.info("Changed Traffic Light " + trafficLight.getId() + "' state to " + mLightState);
+        //log.info("Changed Traffic Light " + trafficLight.getId() + "' state to " + mLightState);
         return mLightState;
     }
 
+
+    public void stopTrafficLightScenario(boolean printLog) {
+
+        if (mTimer != null) {
+
+            if (printLog) {
+                log.info("Stopping " + mTimer.toString());
+            }
+
+            mTimer.cancel();
+            mTimer.purge();
+        }
+    }
+
+    private void stopTrafficLightScenario() {
+        stopTrafficLightScenario(false);
+    }
+
+
     public void startTrafficLightScenario() {
+
+        stopTrafficLightScenario();
         mTimer = new Timer();
         mTimer.schedule(new trafficLightTimerExpired(), getStateTimeInSeconds() * 1000);
     }
 
     public void setState(LightState newState) {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-        }
+
+        stopTrafficLightScenario();
         mLightState = newState;
 
         updateTrafficLight(mOn[mLightState.ordinal()], mOff[mLightState.ordinal()]);
@@ -118,7 +138,7 @@ public class TrafficLightState {
         if (on != null) {
 
             for (TrafficLightColorEnum color : on) {
-               trafficLightDao.sendOnCommand(trafficLight, color);
+                trafficLightDao.sendOnCommand(trafficLight, color);
             }
         }
 

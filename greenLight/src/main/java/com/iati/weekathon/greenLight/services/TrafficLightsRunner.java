@@ -4,10 +4,10 @@ import com.iati.weekathon.greenLight.domain.TrafficLightState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,15 +21,15 @@ public class TrafficLightsRunner implements Runnable {
     private final static Logger log = LoggerFactory.getLogger(TrafficLightsRunner.class);
 
     private Map<Long, TrafficLightState> trafficLightsIdToState;
-    private volatile Set<Long> trafficLightsToSetAsGreen; //todo: make it synchronized
+    private volatile Queue<Long> trafficLightsToSetAsGreen ;
 
     public TrafficLightsRunner(Map<Long, TrafficLightState> trafficLightsIdToState) {
         this.trafficLightsIdToState = trafficLightsIdToState;
-        this.trafficLightsToSetAsGreen = Collections.newSetFromMap(new ConcurrentHashMap<Long, Boolean>());
+        this.trafficLightsToSetAsGreen = new ConcurrentLinkedQueue<Long>();
     }
 
 
-    public void addLightsToSetAsGreen(Set<Long> trafficLightIds){
+    public void addLightsToSetAsGreen(List<Long> trafficLightIds){
         trafficLightsToSetAsGreen.addAll(trafficLightIds);
     }
 
@@ -46,12 +46,12 @@ public class TrafficLightsRunner implements Runnable {
                 try {
                     Thread.sleep(5l);
                 } catch (InterruptedException e) {
-                    log.error("Traffic Lights Runner caught an interruption", e);
+                    log.error("Traffic Lights Runner caught an interruption Exception", e);
                 }
 
             } else {
 
-                log.info("Received the following Traffic Light ids to set as Green: "+trafficLightsToSetAsGreen);
+                log.info("Traffic lights Queue is no longer empty. The following Traffic Light ids will be set as Green: "+trafficLightsToSetAsGreen);
                 for (Long trafficLightId : trafficLightsToSetAsGreen) {
 
                     TrafficLightState trafficLightState = trafficLightsIdToState.get(trafficLightId);

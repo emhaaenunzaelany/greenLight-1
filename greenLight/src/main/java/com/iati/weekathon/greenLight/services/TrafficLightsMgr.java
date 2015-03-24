@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -53,23 +51,27 @@ public class TrafficLightsMgr {
         trafficLightIdToState = new HashMap<>();
 
         for (Map.Entry<Long, TrafficLight> entry : trafficLights.entrySet()) {
-            long trafficLightId = entry.getKey();
-            if (trafficLightId == 1) {
-                TrafficLight trafficLight = entry.getValue();
-                TrafficLightState state = new TrafficLightState(trafficLightDao, trafficLight, 10, 1, 7, 2);
-                trafficLightIdToState.put(trafficLightId, state);
-            } else if (trafficLightId == 2) {
-                TrafficLight trafficLight = entry.getValue();
-                TrafficLightState state = new TrafficLightState(trafficLightDao, trafficLight, 6, 1, 4, 2);
-                trafficLightIdToState.put(trafficLightId, state);
-            }
 
+            long trafficLightId = entry.getKey();
+
+            TrafficLight trafficLight = entry.getValue();
+
+            TrafficLightState state = new TrafficLightState(trafficLightDao, trafficLight);
+
+            trafficLightIdToState.put(trafficLightId, state);
         }
 
         trafficLightsRunner = new TrafficLightsRunner(trafficLightIdToState);
         Thread trafficLightsRunnerThread = new Thread(trafficLightsRunner);
         trafficLightsRunnerThread.start();
 
+    }
+
+    @PreDestroy
+    private void stopThreads(){
+        for(TrafficLightState trafficLightState: trafficLightIdToState.values()){
+            trafficLightState.stopTrafficLightScenario(true);
+        }
     }
 
     public void setTrafficLights(Map<Long, TrafficLight> trafficLights) {
@@ -79,7 +81,7 @@ public class TrafficLightsMgr {
 
     public void setTrafficLightToGreenAccordingToVehicleLocation(int x, int y) {
 
-        Set<Long> trafficLightsInRange = new HashSet<>();
+        List<Long> trafficLightsInRange = new LinkedList<>();
 
         for (TrafficLight trafficLight : trafficLights.values()) {
 
@@ -91,7 +93,7 @@ public class TrafficLightsMgr {
 
         if (!trafficLightsInRange.isEmpty()) {
 
-            log.info("Adding the following Traffic-Lights to be set as Green: "+trafficLightsInRange.toString());
+            log.info("Adding the following Traffic-Lights to be set as Green: " + trafficLightsInRange.toString());
             trafficLightsRunner.addLightsToSetAsGreen(trafficLightsInRange);
         }
 
@@ -99,7 +101,7 @@ public class TrafficLightsMgr {
 
 
     public void setTrafficLightToGreen(Long trafficLightId) {
-        Set<Long> ids = new HashSet<>();
+        List<Long> ids = new LinkedList<>();
         ids.add(trafficLightId);
         trafficLightsRunner.addLightsToSetAsGreen(ids);
     }

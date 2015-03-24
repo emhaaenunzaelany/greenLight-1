@@ -63,7 +63,7 @@ public class TrafficLightDao {
         }
     }
 
-    private int getLightIdByGivenColor(TrafficLight trafficLight, TrafficLightColorEnum color){
+    private int getLightIdByGivenColor(TrafficLight trafficLight, TrafficLightColorEnum color) {
 
         if (TrafficLightColorEnum.RED.equals(color)) {
 
@@ -98,14 +98,11 @@ public class TrafficLightDao {
 
     }
 
-    private synchronized void sendCommand(TrafficLight trafficLight, String command) {
+    private void sendCommand(TrafficLight trafficLight, String command) {
 
-        log.info("Sending command " + command+" to traffic light id "+trafficLight.getId());
         TrafficLightConnector connector = trafficLightIpToConnector.get(trafficLight.getNpsIp());
-        connector.getOutputStream().println(command);
-        connector.getOutputStream().flush();
-        String commandResult = connector.readUntil(TrafficLightConnector.START_OF_TELNET_COMMAND);
-        log.info("Command Result: \n" + commandResult);
+        log.info("Sending command " + command + " to traffic light id " + trafficLight.getId()+" (connector: "+connector.getIp()+")");
+        connector.sendCommand(command);
     }
 
 

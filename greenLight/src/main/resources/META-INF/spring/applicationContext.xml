@@ -24,6 +24,10 @@
                 <property name="redId" value="${traffic.light.1.red.id}"/>
                 <property name="yellowId" value="${traffic.light.1.yellow.id}"/>
                 <property name="greenId" value="${traffic.light.1.green.id}"/>
+                <property name="redTimeInSeconds" value="${traffic.light.1.red.time}"/>
+                <property name="redYellowTimeInSeconds" value="${traffic.light.1.redYellow.time}"/>
+                <property name="greenTimeInSeconds" value="${traffic.light.1.green.time}"/>
+                <property name="yellowTimeInSeconds" value="${traffic.light.1.yellow.time}"/>
             </bean>
         </entry>
         <entry key="${traffic.light.2.id}">
@@ -35,6 +39,40 @@
                 <property name="redId" value="${traffic.light.2.red.id}"/>
                 <property name="yellowId" value="${traffic.light.2.yellow.id}"/>
                 <property name="greenId" value="${traffic.light.2.green.id}"/>
+                <property name="redTimeInSeconds" value="${traffic.light.2.red.time}"/>
+                <property name="redYellowTimeInSeconds" value="${traffic.light.2.redYellow.time}"/>
+                <property name="greenTimeInSeconds" value="${traffic.light.2.green.time}"/>
+                <property name="yellowTimeInSeconds" value="${traffic.light.2.yellow.time}"/>
+            </bean>
+        </entry>
+        <entry key="${traffic.light.3.id}">
+            <bean id="trafficLight3" class="com.iati.weekathon.greenLight.domain.TrafficLight">
+                <property name="id" value="${traffic.light.3.id}"/>
+                <property name="npsIp" value="${traffic.light.3.nps}"/>
+                <property name="x" value="${traffic.light.3.x}"/>
+                <property name="y" value="${traffic.light.3.y}"/>
+                <property name="redId" value="${traffic.light.3.red.id}"/>
+                <property name="yellowId" value="${traffic.light.3.yellow.id}"/>
+                <property name="greenId" value="${traffic.light.3.green.id}"/>
+                <property name="redTimeInSeconds" value="${traffic.light.3.red.time}"/>
+                <property name="redYellowTimeInSeconds" value="${traffic.light.3.redYellow.time}"/>
+                <property name="greenTimeInSeconds" value="${traffic.light.3.green.time}"/>
+                <property name="yellowTimeInSeconds" value="${traffic.light.3.yellow.time}"/>
+            </bean>
+        </entry>
+        <entry key="${traffic.light.4.id}">
+            <bean id="trafficLight4" class="com.iati.weekathon.greenLight.domain.TrafficLight">
+                <property name="id" value="${traffic.light.4.id}"/>
+                <property name="npsIp" value="${traffic.light.4.nps}"/>
+                <property name="x" value="${traffic.light.4.x}"/>
+                <property name="y" value="${traffic.light.4.y}"/>
+                <property name="redId" value="${traffic.light.4.red.id}"/>
+                <property name="yellowId" value="${traffic.light.4.yellow.id}"/>
+                <property name="greenId" value="${traffic.light.4.green.id}"/>
+                <property name="redTimeInSeconds" value="${traffic.light.4.red.time}"/>
+                <property name="redYellowTimeInSeconds" value="${traffic.light.4.redYellow.time}"/>
+                <property name="greenTimeInSeconds" value="${traffic.light.4.green.time}"/>
+                <property name="yellowTimeInSeconds" value="${traffic.light.4.yellow.time}"/>
             </bean>
         </entry>
     </util:map>

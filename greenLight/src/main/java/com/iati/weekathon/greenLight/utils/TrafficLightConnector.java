@@ -39,12 +39,16 @@ public class TrafficLightConnector {
     public void connect() throws IOException, InvalidTelnetOptionException {
 
         this.telnetClient = new TelnetClient();
+
         this.telnetClient.addOptionHandler(new TerminalTypeOptionHandler("VT100", false, false, true, false));
         this.telnetClient.addOptionHandler(new SuppressGAOptionHandler(true, true, true, true));
         this.telnetClient.addOptionHandler(new EchoOptionHandler(true, false, true, false));
+
         log.info("Connecting to telnetClient. IP: " + ip + " , trafficLightPort:" + port);
         this.telnetClient.connect(ip, port);
         log.info("Connected to telnetClient1. IP: " + ip + " , trafficLightPort1:" + port);
+        //telnetClient.setSoTimeout(20000);  //0 seconds
+
         this.outputStream = new PrintStream(telnetClient.getOutputStream());
         this.inputStream = telnetClient.getInputStream();
         String sessionStartText = readUntil(START_OF_TELNET_COMMAND);
@@ -58,11 +62,11 @@ public class TrafficLightConnector {
             return;
         }
         try {
-            log.info("Disconnecting telnetClient with IP: "+ip);
+            log.info("Disconnecting telnetClient with IP: " + ip);
             telnetClient.disconnect();
-            log.info("Disconnected  telnetClient with IP: "+ip);
+            log.info("Disconnected  telnetClient with IP: " + ip);
         } catch (Exception e) {
-            log.error("Failed to disconnect telnetClient with IP: "+ip, e);
+            log.error("Failed to disconnect telnetClient with IP: " + ip, e);
         }
     }
 
@@ -87,6 +91,18 @@ public class TrafficLightConnector {
         }
         log.error("Failed to find pattern '" + pattern + "' from telnet inputStream");
         return null;
+    }
+
+
+    public void sendCommand(String command) {
+        synchronized (this) {
+            log.info("Sending command " + command + " to connector " + this.getIp());
+            getOutputStream().println(command);
+            getOutputStream().flush();
+            log.info("Sent command " + command + " to connector " + this.getIp());
+            //String commandResult = readUntil(TrafficLightConnector.START_OF_TELNET_COMMAND);
+            //log.info("Command Result: \n" + commandResult);
+        }
     }
 
     public String getIp() {
