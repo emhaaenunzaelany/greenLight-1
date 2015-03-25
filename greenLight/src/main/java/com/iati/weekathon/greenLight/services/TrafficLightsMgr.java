@@ -19,6 +19,47 @@ import java.util.*;
 public class TrafficLightsMgr {
 
     private final static Logger log = LoggerFactory.getLogger(TrafficLightsMgr.class);
+    public boolean lightMatrix[][][] = {
+            //light 1(0,0)
+            {
+                    {true, true, false, false},
+                    {true, false, false, false},
+                    {true, false, false, false},
+                    {true, false, false, false},
+                    {true, false, false, false}
+            },
+
+            //light 2 (3,3)
+            {
+                    {false, false, false, true},
+                    {false, false, false, true},
+                    {false, false, false, true},
+                    {false, false, false, true},
+                    {false, false, true, true}
+            },
+
+            //light 3 (0,4)
+            {
+                    {true, false, false, false},
+                    {true, false, false, false},
+                    {true, false, false, false},
+                    {true, false, false, false},
+                    {true, true, false, false}
+            },
+
+
+
+            //light 4 (3,0)
+            {
+                    {false, false, true, true},
+                    {false, false, false, true},
+                    {false, false, false, true},
+                    {false, false, false, true},
+                    {false, false, false, true}
+            }
+
+
+    };
 
 
     @Resource
@@ -79,7 +120,7 @@ public class TrafficLightsMgr {
     }
 
 
-    public void setTrafficLightToGreenAccordingToVehicleLocation(int x, int y) {
+    public void setTrafficLightToGreenAccordingToVehicleLocationByEuclideanDistance(int x, int y) {
 
         List<Long> trafficLightsInRange = new LinkedList<>();
 
@@ -97,6 +138,30 @@ public class TrafficLightsMgr {
             trafficLightsRunner.addLightsToSetAsGreen(trafficLightsInRange);
         }
 
+    }
+
+    public void setTrafficLightToGreenAccordingToVehicleLocation(int x, int y) {
+
+        //setTrafficLightToGreenAccordingToVehicleLocationByEuclideanDistance(x, y);
+        setTrafficLightAsGreenAccordingToMatrix(x, y);
+
+    }
+
+
+    private void setTrafficLightAsGreenAccordingToMatrix(int x, int y) {
+
+        List<Long> trafficLightsInRange = new LinkedList<>();
+
+        for (TrafficLight trafficLight : trafficLights.values()) {
+            if(lightMatrix[(int)trafficLight.getId()-1][y][x])  //traffic lights ids start from zero, so subtract 1
+                trafficLightsInRange.add(trafficLight.getId());
+        }
+
+        if (!trafficLightsInRange.isEmpty()) {
+
+            log.info("Adding the following Traffic-Lights to be set as Green: " + trafficLightsInRange.toString());
+            trafficLightsRunner.addLightsToSetAsGreen(trafficLightsInRange);
+        }
     }
 
 

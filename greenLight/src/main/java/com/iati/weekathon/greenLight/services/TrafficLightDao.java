@@ -34,6 +34,18 @@ public class TrafficLightDao {
     @Value("${nps2.port}")
     private int trafficLightPort2;
 
+    @Value("${nps3.ip}")
+    private String trafficLightIp3;
+
+    @Value("${nps3.port}")
+    private int trafficLightPort3;
+
+    @Value("${nps4.ip}")
+    private String trafficLightIp4;
+
+    @Value("${nps4.port}")
+    private int trafficLightPort4;
+
 
     private Map<String, TrafficLightConnector> trafficLightIpToConnector;
 
@@ -45,9 +57,13 @@ public class TrafficLightDao {
 
         TrafficLightConnector trafficLightConnector1 = new TrafficLightConnector(trafficLightIp1, trafficLightPort1);
         TrafficLightConnector trafficLightConnector2 = new TrafficLightConnector(trafficLightIp2, trafficLightPort2);
+        TrafficLightConnector trafficLightConnector3 = new TrafficLightConnector(trafficLightIp3, trafficLightPort3);
+        TrafficLightConnector trafficLightConnector4 = new TrafficLightConnector(trafficLightIp4, trafficLightPort4);
 
         trafficLightIpToConnector.put(trafficLightIp1, trafficLightConnector1);
         trafficLightIpToConnector.put(trafficLightIp2, trafficLightConnector2);
+        trafficLightIpToConnector.put(trafficLightIp3, trafficLightConnector3);
+        trafficLightIpToConnector.put(trafficLightIp4, trafficLightConnector4);
 
         for (TrafficLightConnector trafficLightConnector : trafficLightIpToConnector.values()) {
             trafficLightConnector.connect();

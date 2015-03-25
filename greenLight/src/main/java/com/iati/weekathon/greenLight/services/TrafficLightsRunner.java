@@ -21,7 +21,8 @@ public class TrafficLightsRunner implements Runnable {
     private final static Logger log = LoggerFactory.getLogger(TrafficLightsRunner.class);
 
     private Map<Long, TrafficLightState> trafficLightsIdToState;
-    private volatile Queue<Long> trafficLightsToSetAsGreen ;
+    private volatile Queue<Long> trafficLightsToSetAsGreen;
+
 
     public TrafficLightsRunner(Map<Long, TrafficLightState> trafficLightsIdToState) {
         this.trafficLightsIdToState = trafficLightsIdToState;
@@ -29,7 +30,7 @@ public class TrafficLightsRunner implements Runnable {
     }
 
 
-    public void addLightsToSetAsGreen(List<Long> trafficLightIds){
+    public void addLightsToSetAsGreen(List<Long> trafficLightIds) {
         trafficLightsToSetAsGreen.addAll(trafficLightIds);
     }
 
@@ -51,10 +52,11 @@ public class TrafficLightsRunner implements Runnable {
 
             } else {
 
-                log.info("Traffic lights Queue is no longer empty. The following Traffic Light ids will be set as Green: "+trafficLightsToSetAsGreen);
+                log.info("Traffic lights Queue is no longer empty. The following Traffic Light ids will be set as Green: " + trafficLightsToSetAsGreen);
                 for (Long trafficLightId : trafficLightsToSetAsGreen) {
 
                     TrafficLightState trafficLightState = trafficLightsIdToState.get(trafficLightId);
+
                     trafficLightState.setStateGreen();
                 }
 
